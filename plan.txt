@@ -1,0 +1,55 @@
+### Phase 1: Foundation & Database
+
+1.  **Project Structure:** Create the directory layout:
+    *   `/`: Main files like `index.php`, `login.php`, `bundles.php`.
+    *   `/admin`: Admin dashboard files.
+    *   `/css`: Compiled TailwindCSS output.
+    *   `/includes`: Core PHP files for database connection, M-Pesa API, and functions.
+    *   `/js`: JavaScript files, if needed.
+2.  **Database Schema:** Design and create the SQL script for the MySQL database with the following tables:
+    *   `users`: Stores customer phone number and password.
+    *   `devices`: Links a user's MAC address to their active data bundle and tracks usage.
+    *   `bundles`: Defines the available data bundles (e.g., 1GB for 20 KES).
+    *   `transactions`: Logs all M-Pesa payment details.
+    *   `admins`: Stores credentials for the admin panel.
+3.  **Configuration:** Create a central `config.php` to store database credentials, M-Pesa API keys, and other settings.
+
+### Phase 2: Backend Logic (PHP)
+
+1.  **Core Portal Logic (`index.php`):**
+    *   This is the entry point for all connecting devices.
+    *   It will capture the device's IP address.
+    *   It will execute a Windows shell command (`arp -a`) via PHP to find the MAC address corresponding to the IP.
+    *   It will query the `devices` table to check for an active bundle for that MAC address.
+    *   If a valid bundle exists, it will allow access (conceptually).
+    *   If not, it will redirect to `login.php`.
+2.  **User Authentication:**
+    *   Implement login and registration logic.
+    *   Securely handle passwords using hashing.
+3.  **M-Pesa Integration:**
+    *   Develop a PHP module (`includes/mpesa_handler.php`) to manage Daraja API interactions.
+    *   Implement the STK Push request to initiate payments.
+    *   Create a `callback.php` endpoint to receive and process payment confirmation from Safaricom. On success, it will update the user's bundle in the `devices` table.
+4.  **Admin Dashboard:**
+    *   Create a secure login for administrators.
+    *   Build the dashboard to display reports on connected devices, bundle usage, and total revenue from the database.
+
+### Phase 3: Frontend (UI)
+
+1.  **User Pages:**
+    *   Design a simple, responsive login/register page (`login.php`).
+    *   Create a page for users to view and purchase data bundles (`bundles.php`).
+2.  **Admin Panel:**
+    *   Design the admin login page (`admin/index.php`).
+    *   Create the main dashboard view with data tables (`admin/dashboard.php`).
+3.  **Styling:**
+    *   Use the TailwindCSS CDN for rapid styling to ensure a clean, modern, and responsive UI across all pages without requiring a local build process.
+
+### Phase 4: Deployment & Documentation
+
+1.  **Deployment Guide:** Write a `README.md` file with clear, step-by-step instructions for deploying on a Windows PC using XAMPP. This will include:
+    *   Setting up XAMPP (Apache, MySQL, PHP).
+    *   Importing the SQL database schema.
+    *   Configuring the project (`config.php`).
+    *   Setting a static IP address on the Windows machine.
+    *   Guidance on configuring the Wi-Fi router to use the PC as the gateway/DNS server to enforce the captive portal.
