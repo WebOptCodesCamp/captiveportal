@@ -61,34 +61,20 @@ function get_mac_address() {
  * @return bool True if the bundle is active, false otherwise.
  */
 function has_active_bundle($mysqli, $mac_address) {
-    if (empty($mac_address)) {
-        return false;
+    // Your existing database check
+    $has_bundle = check_database_bundle($mysqli, $mac_address);
+    
+    if ($has_bundle) {
+        // Allow access via MikroTik API
+        $mikrotik = new MikroTikAPI(MIKROTIK_HOST, MIKROTIK_USER, MIKROTIK_PASS);
+        $mikrotik->allowUser($mac_address);
+    } else {
+        // Block access via MikroTik API
+        $mikrotik = new MikroTikAPI(MIKROTIK_HOST, MIKROTIK_USER, MIKROTIK_PASS);
+        $mikrotik->blockUser($mac_address);
     }
-
-    // Prepare the SQL statement to prevent SQL injection.
-    $stmt = $mysqli->prepare(
-        "SELECT b.data_limit_mb, b.is_unlimited, d.data_used_mb, d.bundle_expiry_time
-         FROM devices d
-         JOIN bundles b ON d.bundle_id = b.id
-         WHERE d.mac_address = ? AND d.bundle_expiry_time > NOW()"
-    );
-    $stmt->bind_param('s', $mac_address);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $device = $result->fetch_assoc();
-        // If the bundle is unlimited, grant access immediately.
-        if ($device['is_unlimited']) {
-            return true;
-        }
-        // Check if data used is less than the limit.
-        if ($device['data_used_mb'] < $device['data_limit_mb']) {
-            return true;
-        }
-    }
-
-    return false;
+    
+    return $has_bundle;
 }
 
 ?>
