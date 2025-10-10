@@ -4,6 +4,7 @@
 // ----------------------------------------------------------------
 
 require_once 'db.php';
+require_once 'mikrotik_controller.php';
 
 /**
  * Gets the MAC address of a client based on their IP address by executing `arp -a`.
@@ -54,27 +55,91 @@ function get_mac_address() {
 }
 
 /**
- * Checks if a device has an active and valid data bundle.
- *
- * @param mysqli $mysqli The database connection object.
- * @param string $mac_address The MAC address of the device to check.
- * @return bool True if the bundle is active, false otherwise.
+ * Enhanced bundle check with MikroTik integration
  */
 function has_active_bundle($mysqli, $mac_address) {
-    // Your existing database check
-    $has_bundle = check_database_bundle($mysqli, $mac_address);
+    // Get detailed bundle information
+    $stmt = $mysqli->prepare("
+        SELECT d.*, b.name, b.data_limit_mb, b.duration_minutes, b.price_kes, b.is_unlimited,
+               CASE 
+                   WHEN b.is_unlimited = 1 THEN 'unlimited'
+                   WHEN d.data_used_mb >= b.data_limit_mb THEN 'data_exhausted'
+                   WHEN d.bundle_expiry_time <= NOW() THEN 'time_expired'
+                   ELSE 'active'
+               END as bundle_status
+        FROM devices d 
+        LEFT JOIN bundles b ON d.bundle_id = b.id 
+        WHERE d.mac_address = ?
+    ");
+    $stmt->bind_param('s', $mac_address);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $bundle_data = $result->fetch_assoc();
     
-    if ($has_bundle) {
-        // Allow access via MikroTik API
-        $mikrotik = new MikroTikAPI(MIKROTIK_HOST, MIKROTIK_USER, MIKROTIK_PASS);
-        $mikrotik->allowUser($mac_address);
+    if ($bundle_data) {
+        $is_active = false;
+        
+        // Check if bundle is still valid
+        if ($bundle_data['bundle_status'] === 'active' || $bundle_data['bundle_status'] === 'unlimited') {
+            // For unlimited bundles, only check time expiry
+            if ($bundle_data['is_unlimited'] == 1) {
+                $is_active = strtotime($bundle_data['bundle_expiry_time']) > time();
+            } 
+            // For limited bundles, check both time and data
+            else {
+                $time_valid = strtotime($bundle_data['bundle_expiry_time']) > time();
+                $data_valid = $bundle_data['data_used_mb'] < $bundle_data['data_limit_mb'];
+                $is_active = $time_valid && $data_valid;
+            }
+        }
+        
+        if ($is_active) {
+            // Grant access via MikroTik
+            if (defined('MIKROTIK_ENABLED') && MIKROTIK_ENABLED) {
+                $mikrotik = new MikroTikController();
+                $success = $mikrotik->allowMAC($mac_address, $bundle_data);
+                
+                if ($success) {
+                    error_log("MikroTik: Access granted to {$mac_address} - Bundle: {$bundle_data['name']} (" . 
+                             ($bundle_data['is_unlimited'] ? 'UNLIMITED' : $bundle_data['data_limit_mb'] . 'MB') . ")");
+                }
+            }
+            return true;
+        } else {
+            // Block access and clean up MikroTik
+            if (defined('MIKROTIK_ENABLED') && MIKROTIK_ENABLED) {
+                $mikrotik = new MikroTikController();
+                $mikrotik->blockMAC($mac_address);
+                
+                error_log("MikroTik: Access blocked for {$mac_address} - Reason: {$bundle_data['bundle_status']}");
+            }
+            return false;
+        }
     } else {
-        // Block access via MikroTik API
-        $mikrotik = new MikroTikAPI(MIKROTIK_HOST, MIKROTIK_USER, MIKROTIK_PASS);
-        $mikrotik->blockUser($mac_address);
+        // No bundle found - block access
+        if (defined('MIKROTIK_ENABLED') && MIKROTIK_ENABLED) {
+            $mikrotik = new MikroTikController();
+            $mikrotik->blockMAC($mac_address);
+        }
+        return false;
     }
+}
+
+/**
+ * Check database for active bundle
+ */
+function check_database_bundle($mysqli, $mac_address) {
+    $stmt = $mysqli->prepare("
+        SELECT COUNT(*) as has_bundle 
+        FROM devices 
+        WHERE mac_address = ? AND bundle_expiry_time > NOW()
+    ");
+    $stmt->bind_param('s', $mac_address);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
     
-    return $has_bundle;
+    return $row['has_bundle'] > 0;
 }
 
 ?>

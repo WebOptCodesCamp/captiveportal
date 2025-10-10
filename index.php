@@ -9,8 +9,26 @@ require_once 'includes/config.php';
 require_once 'includes/db.php';
 require_once 'includes/functions.php';
 
-// 1. Get the device's MAC address
-$mac_address = get_mac_address();
+// 1. Get the device's MAC address from the router
+require_once 'includes/mikrotik_controller.php';
+$mac_address = null;
+$ip_address = $_SERVER['REMOTE_ADDR'];
+
+
+// Ignore the server's own IP to prevent issues, and handle localhost simulation
+if ($ip_address === '127.0.0.1' || $ip_address === '::1') {
+    // --- START OF SIMULATION CODE ---
+    // Use a fake one for testing purposes on localhost.
+    $_SESSION['fake_mac_for_testing'] = $_SESSION['fake_mac_for_testing'] ?? '00:TEST:MAC:' . strtoupper(substr(md5(rand()), 0, 6));
+    $mac_address = $_SESSION['fake_mac_for_testing'];
+    
+    // Log that we are using a fake MAC
+    error_log("SIMULATION: Running on localhost. Using fake MAC for testing: " . $mac_address);
+    // --- END OF SIMULATION CODE ---
+} elseif ($ip_address !== SERVER_IP) {
+    $mikrotik = new MikroTikController();
+    $mac_address = $mikrotik->getMacForIp($ip_address);
+}
 
 // Store the MAC address in the session for later use (e.g., in the payment callback)
 if ($mac_address) {

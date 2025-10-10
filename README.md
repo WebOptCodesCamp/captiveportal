@@ -1,125 +1,201 @@
-# Captive Portal System for Windows (PHP, MySQL, TailwindCSS)
+# Captive Portal Project
 
-This project is a complete captive portal system designed to run on a local Windows PC using XAMPP. It's built for a Wi-Fi business in Kenya, integrating with Safaricom's M-Pesa Daraja API for payments.
-
-## Features
-- **Captive Portal Logic**: Redirects unauthorized Wi-Fi users to a login page.
-- **MAC Address Detection**: Captures device MAC addresses by querying the Windows ARP table.
-- **User Authentication**: Simple login/registration system using a phone number.
-- **Data Bundles**: Users can purchase data bundles.
-- **M-Pesa Integration**: Securely handles payments via M-Pesa STK Push.
-- **Admin Dashboard**: View connected devices, data usage, and total earnings.
-- **Responsive UI**: Styled with TailwindCSS for a clean interface on any device.
+This document provides two complete guides for deploying this captive portal application:
+*   **Guide A:** For local testing and development on an Android device using Termux.
+*   **Guide B:** For a production environment on a cloud server using DigitalOcean.
 
 ---
 
-## 1. Prerequisites
+# Guide A: Local Testing on Android (Termux)
 
-- **Windows PC**: A dedicated PC that will act as the server.
-- **XAMPP**: A free and easy-to-install Apache distribution containing MariaDB (MySQL), PHP, and Perl. [Download XAMPP](https://www.apachefriends.org/index.html).
-- **Wi-Fi Router**: A router that you have administrative access to, which supports changing the Gateway and DNS settings.
-- **Safaricom Developer Account**: To get M-Pesa Daraja API credentials. [Safaricom Developers](https://developer.safaricom.co.ke/).
-- **Ngrok (for testing)**: A tool to expose your local server to the internet, which is necessary for testing the M-Pesa callback. [Download Ngrok](https://ngrok.com/download).
+This guide covers the full setup for running the portal on an Android device for testing purposes.
 
----
-
-## 2. Deployment Instructions
-
-### Step 2.1: Install and Configure XAMPP
-
-1.  **Install XAMPP**: Download and install XAMPP to a location like `C:\xampp`.
-2.  **Start Services**: Open the **XAMPP Control Panel** and start the **Apache** and **MySQL** modules.
-3.  **Place Project Files**: Copy all the project files (`index.php`, `admin/`, `includes/`, etc.) into the `htdocs` directory inside your XAMPP installation folder (e.g., `C:\xampp\htdocs\captiveportal`).
-
-### Step 2.2: Set Up the Database
-
-1.  **Open phpMyAdmin**: In your browser, navigate to `http://localhost/phpmyadmin`.
-2.  **Create Database**:
-    - Click on the **Databases** tab.
-    - Enter `captive_portal` in the "Create database" field and click **Create**.
-3.  **Import SQL Schema**:
-    - Select the `captive_portal` database from the left-hand menu.
-    - Click on the **Import** tab.
-    - Click "Choose File" and select the `database.sql` file from this project.
-    - Scroll down and click **Go**. This will create all the necessary tables and insert the default data bundles and admin user.
-
-### Step 2.3: Configure the Application
-
-1.  **Open `includes/config.php`**: Open the file `C:\xampp\htdocs\captiveportal\includes\config.php` in a text editor.
-2.  **Database Credentials**: The default XAMPP settings are usually correct (`root` user with no password). If you have set a password, update `DB_PASS`.
-    ```php
-    define('DB_HOST', '127.0.0.1');
-    define('DB_USER', 'root');
-    define('DB_PASS', ''); // Your MySQL password
-    define('DB_NAME', 'captive_portal');
-    ```
-3.  **M-Pesa Credentials**: Fill in the M-Pesa constants with the credentials you obtained from the Safaricom Developer Portal.
-    ```php
-    define('MPESA_CONSUMER_KEY', 'YOUR_CONSUMER_KEY');
-    define('MPESA_CONSUMER_SECRET', 'YOUR_CONSUMER_SECRET');
-    define('MPESA_PASSKEY', 'YOUR_PASSKEY');
-    define('MPESA_SHORTCODE', 'YOUR_BUSINESS_SHORTCODE');
-    ```
-4.  **Server IP**: Set the static IP address that you will assign to your Windows PC (see next section).
-    ```php
-    define('SERVER_IP', '192.168.1.100'); // Example IP
-    ```
+### Guide Structure
+*   **Part 1: One-Time Setup (Termux):** Installing the server environment.
+*   **Part 2: One-Time Setup (MikroTik):** Configuring your router for the local server.
+*   **Part 3: Running the Portal (Daily Use):** Starting and stopping the services.
 
 ---
 
-## 3. Network Configuration
+## Part 1: Setting Up the Application in Termux
 
-This is the most critical part of the setup. The goal is to force all network traffic from Wi-Fi clients through your PC.
+This section covers the **one-time setup** on your Android device.
 
-### Step 3.1: Set a Static IP on the Windows PC
+#### Step 1: Install Core Packages
+Update Termux and install the web server, PHP, database, and SSH server.
+```bash
+pkg update -y && pkg install -y apache2 php php-apache mariadb openssh
+```
 
-1.  Go to **Control Panel > Network and Internet > Network and Sharing Center**.
-2.  Click **Change adapter settings**.
-3.  Right-click your network adapter (e.g., "Ethernet" or "Wi-Fi") and select **Properties**.
-4.  Select **Internet Protocol Version 4 (TCP/IPv4)** and click **Properties**.
-5.  Select "Use the following IP address".
-    - **IP address**: `192.168.1.100` (This should be outside your router's DHCP range but on the same subnet. This is the IP you set in `config.php`).
-    - **Subnet mask**: `255.255.255.0` (Usually this value).
-    - **Default gateway**: `192.168.1.1` (This is your router's IP address).
-6.  Set the **Preferred DNS server** to your router's IP (`192.168.1.1`) or a public DNS like `8.8.8.8`.
-7.  Click **OK** to save.
+#### Step 2: Set Up the MariaDB Database
+1.  **Start & Secure:**
+    ```bash
+    mysqld_safe -u root &
+    mysql_secure_installation
+    ```
+2.  **Create Database & User:** Log in to MariaDB (`mysql -u root -p`) and run:
+    ```sql
+    CREATE DATABASE captiveportal;
+    CREATE USER 'portaluser'@'localhost' IDENTIFIED BY 'your_password';
+    GRANT ALL PRIVILEGES ON captiveportal.* TO 'portaluser'@'localhost';
+    FLUSH PRIVILEGES; EXIT;
+    ```
 
-### Step 3.2: Configure the Wi-Fi Router
+#### Step 3: (Optional) Move Web Directory for Easy Access
+1.  Create a `www` directory in your home folder: `mkdir ~/www`
+2.  Edit the Apache config file: `nano ../usr/etc/apache2/httpd.conf`
+3.  Change `DocumentRoot` to `"/data/data/com.termux/files/home/www"`
+4.  Change the `<Directory "...">` path to `"/data/data/com.termux/files/home/www"`
+5.  Restart Apache: `apachectl restart`
 
-1.  **Log in to your router's admin panel** (usually `192.168.1.1`).
-2.  **Find the DHCP Server settings**.
-3.  Change the **Default Gateway** (or "Router") setting to your PC's static IP address (`192.168.1.100`).
-4.  Change the **Primary DNS Server** setting to your PC's static IP address (`192.168.1.100`).
-5.  **Save and reboot the router**.
+#### Step 4: Deploy and Configure the Application
+1.  **Place Project Files:** Move all project files into your web directory (`~/www`).
+2.  **Import Database Schema:**
+    ```bash
+    cd ~/www
+    mysql -u portaluser -p captiveportal < database.sql
+    ```
+3.  **Configure `config.php`** with your database credentials.
 
-Now, when any device connects to the Wi-Fi, the router will tell it that your PC is the gateway to the internet. All traffic will be directed to your XAMPP server, and `index.php` will act as the entry point.
+#### Step 5: Prepare the Cleanup Service
+1.  **Install Termux:API:** Get the app from F-Droid, then run: `pkg install termux-api`
+2.  **Make Script Executable:** `cd ~/www && chmod +x run_cleanup.sh`
+
+#### Step 6: (Optional) Set Up SSH for Easy File Access
+1.  **Set Your Password:** `passwd`
+2.  **Start SSH Server:** `sshd` (runs on port 8022)
+3.  Connect from a PC with `sftp://<your-username>@<your-phone-ip>:8022`.
 
 ---
 
-## 4. Testing
+## Part 2: Configuring the MikroTik for Local Testing
 
-### Step 4.1: Testing M-Pesa with Ngrok
+This section covers the **one-time setup** on your MikroTik router to use the local portal on your phone.
 
-Safaricom's API needs a public URL to send the payment confirmation to your `callback.php`.
+#### Step 1: Set a Static IP Address for Your Phone
+1.  Connect your phone to the MikroTik WiFi.
+2.  Open WinBox or WebFig.
+3.  Go to **IP > DHCP Server > Leases**.
+4.  Find your phone in the list (identify it by its MAC Address).
+5.  Double-click the entry and click **Make Static**.
+6.  Note this IP address (e.g., `192.168.88.123`).
 
-1.  **Run Ngrok**: Open a command prompt and run the following command to expose your local server's port 80.
-    ```sh
-    ngrok http 80
+#### Step 2: Bypass the Hotspot for Your Phone
+1.  Go to **IP > Hotspot > IP Bindings**.
+2.  Click **+** to add a new entry.
+3.  Set the **IP Address** to your phone's static IP.
+4.  Set the **Type** to `bypassed`.
+5.  Click **OK**.
+
+#### Step 3: Configure the Hotspot Walled Garden
+1.  Go to **IP > Hotspot > Walled Garden**.
+2.  Add a new entry for **your phone's IP address** by putting the IP in the **Dst. Host** field.
+3.  Add separate entries for each of the following domains in the **Dst. Host** field:
+    *   `fonts.googleapis.com`
+    *   `fonts.gstatic.com`
+    *   `cdn.tailwindcss.com`
+
+#### Step 4: Modify the Hotspot Login Page for Redirection
+1.  In WinBox/WebFig, open **Files**.
+2.  Find and **backup** `hotspot/login.html`.
+3.  Open the file and replace its content with the code below, changing `YOUR_PHONE_STATIC_IP` to your phone's actual static IP.
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Connecting...</title>
+        <script type="text/javascript">
+            window.onload = function() {
+                window.location.href = "http://YOUR_PHONE_STATIC_IP:8080/index.php";
+            };
+        </script>
+    </head>
+    <body><p>Redirecting...</p></body>
+    </html>
     ```
-2.  **Get the URL**: Ngrok will give you a public `https` URL (e.g., `https://abcd-efgh.ngrok.io`).
-3.  **Update `config.php`**: Change the `MPESA_CALLBACK_URL` to this Ngrok URL.
-    ```php
-    define('MPESA_CALLBACK_URL', 'https://abcd-efgh.ngrok.io/captiveportal/callback.php');
+4.  Upload the modified file back to the `hotspot/` directory.
+
+---
+
+## Part 3: Running the Local Portal (Daily Use)
+
+Follow these steps in Termux each time you want to start the portal.
+
+1.  **Start the Database Server:** `mysqld_safe -u root &`
+2.  **Start the Web Server:** `apachectl start`
+3.  **Start the SSH Server (if needed):** `sshd`
+4.  **Start the Cleanup Service:**
+    ```bash
+    cd ~/www
+    termux-wake-lock nohup ./run_cleanup.sh &
     ```
-4.  **Register URL on Safaricom**: You may need to register this URL on the Safaricom Developer Portal for your app.
 
-### Step 4.2: Final Test
+### How to Stop the Services
+1.  **Stop Cleanup Service:** Find PID (`ps aux | grep run_cleanup`), `kill <PID>`, then `termux-wake-unlock`.
+2.  **Stop SSH Server:** `pkill sshd`
+3.  **Stop Web Server:** `apachectl stop`
+4.  **Stop Database Server:** `mysqladmin -u root -p shutdown`
 
-1.  Connect a new device (like a smartphone) to your Wi-Fi network.
-2.  The device should automatically be redirected to the login page (`http://192.168.1.100/captiveportal/`).
-3.  Register a new account, purchase a bundle, and complete the M-Pesa payment on your phone.
-4.  After a successful payment, the `Access Granted` page should appear.
+---
 
-### Admin Access
--   To access the admin panel, navigate to `http://192.168.1.100/captiveportal/admin/`.
--   Default credentials are `admin` / `password`.
+# Guide B: Production Deployment on DigitalOcean
+
+This guide covers deploying the application to a DigitalOcean Droplet (or any Ubuntu 22.04 server) for a live, production environment.
+
+### Step 1: Create a DigitalOcean Droplet
+1.  Sign up for DigitalOcean.
+2.  Create a new **Droplet** (Ubuntu 22.04 LTS, basic plan).
+3.  Add your **SSH Key** for secure access.
+4.  Note the Droplet's **public IP address**.
+
+### Step 2: Initial Server Setup
+1.  Login as root: `ssh root@<your_droplet_ip>`
+2.  Create a new sudo user: `adduser sammy` and `usermod -aG sudo sammy`.
+3.  Setup firewall: `ufw allow OpenSSH`, `ufw allow 'Apache Full'`, `ufw enable`.
+4.  Log out and log back in as your new user: `ssh sammy@<your_droplet_ip>`
+
+### Step 3: Install LAMP Stack (Apache, MySQL, PHP)
+```bash
+sudo apt update
+sudo apt install -y apache2 mysql-server php libapache2-mod-php php-mysql git
+```
+
+### Step 4: Secure and Prepare MySQL
+1.  Secure installation: `sudo mysql_secure_installation`
+2.  Create Database & User: Log in to MySQL (`sudo mysql`) and run:
+    ```sql
+    CREATE DATABASE captiveportal;
+    CREATE USER 'portaluser'@'localhost' IDENTIFIED BY 'a_very_strong_password';
+    GRANT ALL PRIVILEGES ON captiveportal.* TO 'portaluser'@'localhost';
+    FLUSH PRIVILEGES; EXIT;
+    ```
+
+### Step 5: Deploy Application Code
+1.  Clone your project into the web root: `cd /var/www/html` and `sudo git clone https://github.com/your_username/your_project.git .`
+2.  Set permissions: `sudo chown -R www-data:www-data /var/www/html` and `sudo chmod -R 775 /var/www/html`.
+
+### Step 6: Configure the Application
+1.  Import Database: `cd /var/www/html && sudo mysql -u portaluser -p captiveportal < database.sql`
+2.  Edit `includes/config.php` with your new MySQL password.
+3.  **Important:** Edit `initiate_payment.php` and re-enable the production M-Pesa code.
+
+### Step 7: Set Up the Scheduled Cleanup Task (Cron Job)
+1.  Open the cron table: `crontab -e`
+2.  Add the following line to run the script every 5 minutes:
+    ```
+    */5 * * * * /usr/bin/php /var/www/html/sync_data_usage.php
+    ```
+
+### Step 8: Re-Configure MikroTik for Production
+This is a critical security step.
+
+1.  **Update Walled Garden:** In `IP > Hotspot > Walled Garden`, remove your phone's local IP and add the **public IP of your DigitalOcean Droplet**.
+2.  **Update Redirect:** In `hotspot/login.html`, change the URL to your Droplet's IP:
+    `window.location.href = "http://YOUR_DROPLET_PUBLIC_IP/index.php";`
+3.  **SECURE THE MIKROTIK API:**
+    *   Go to **IP > Firewall > Filter Rules** and add a new rule.
+    *   **Chain:** `input`, **Protocol:** `tcp`, **Dst. Port:** `8728` (or your API port).
+    *   **Src. Address:** **Enter your Droplet's public IP address.**
+    *   **Action:** `accept`
+    *   **IMPORTANT:** Place this rule **before** any general `drop` rules. Only allow access from your Droplet's IP.

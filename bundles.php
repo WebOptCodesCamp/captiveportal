@@ -17,7 +17,7 @@ function formatDuration($minutes) {
 
 // --- Fetch Bundles ---
 // Fetch all available data bundles from the database.
-$result = $mysqli->query("SELECT id, name, data_limit_mb, price_kes, duration_minutes, is_unlimited FROM bundles ORDER BY price_kes ASC");
+$result = $mysqli->query("SELECT id, name, data_limit_mb, price_kes, duration_minutes, is_unlimited, download_limit_kbps FROM bundles ORDER BY price_kes ASC");
 $bundles = $result->fetch_all(MYSQLI_ASSOC);
 
 $payment_status = $_GET['status'] ?? '';
@@ -35,7 +35,7 @@ if ($payment_status === 'success') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose Your Data Bundle - WiFi Portal</title>
+    <title>Choose Your Data Bundle - eBAZZU Hotspot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -108,7 +108,7 @@ if ($payment_status === 'success') {
         
         /* Shimmer effect for popular bundle */
         .price-shimmer {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #667eea 75%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #7c3aed 25%, #dc2626 50%, #f59e0b 75%, #1e40af 100%);
             background-size: 400% 400%;
             animation: shimmer 4s ease-in-out infinite;
         }
@@ -150,7 +150,7 @@ if ($payment_status === 'success') {
         
         /* Gradient text animation */
         .gradient-text-animated {
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #667eea);
+            background: linear-gradient(45deg, #1e40af, #7c3aed, #dc2626, #f59e0b, #1e40af);
             background-size: 300% 300%;
             animation: gradientMove 6s ease infinite;
             -webkit-background-clip: text;
@@ -160,6 +160,15 @@ if ($payment_status === 'success') {
         @keyframes gradientMove {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
+        }
+        
+        /* Enhanced eBAZZU branding colors */
+        .ebazzu-gradient {
+            background: linear-gradient(135deg, #1e40af 0%, #7c3aed 40%, #dc2626 80%, #f59e0b 100%);
+        }
+        
+        .ebazzu-accent {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ef4444 100%);
         }
         
         /* Pulsing glow effect for popular bundle */
@@ -200,7 +209,7 @@ if ($payment_status === 'success') {
         
         /* Card border animation */
         .border-gradient {
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #667eea);
+            background: linear-gradient(45deg, #1e40af, #7c3aed, #dc2626, #f59e0b, #1e40af);
             background-size: 400% 400%;
             animation: borderGlow 8s ease infinite;
             padding: 2px;
@@ -211,6 +220,20 @@ if ($payment_status === 'success') {
             50% { background-position: 100% 50%; }
         }
         
+        .tier-badge {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+            padding: 6px 12px;
+            border-top-right-radius: 1rem;
+            border-bottom-left-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            z-index: 20;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
         /* Stagger animation for cards */
         .stagger-fade {
             opacity: 0;
@@ -226,15 +249,15 @@ if ($payment_status === 'success') {
         
         /* Data usage visualization */
         .data-visual {
-            background: linear-gradient(135deg, #667eea20, #764ba220);
+            background: linear-gradient(135deg, #1e40af20, #7c3aed20);
             border-radius: 12px;
             padding: 16px;
             margin: 12px 0;
-            border: 1px solid rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(30, 64, 175, 0.2);
             transition: all 0.3s ease;
         }
         .data-visual:hover {
-            background: linear-gradient(135deg, #667eea30, #764ba230);
+            background: linear-gradient(135deg, #1e40af30, #7c3aed30);
             transform: scale(1.02);
         }
         
@@ -389,6 +412,14 @@ if ($payment_status === 'success') {
                 right: 5px;
                 left: 5px;
             }
+
+            .bundle-price {
+                font-size: 2rem;
+            }
+            
+            .bundle-title {
+                font-size: 1.25rem;
+            }
         }
     </style>
 </head>
@@ -414,13 +445,13 @@ if ($payment_status === 'success') {
         <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
             <div class="flex items-center space-x-3">
                 <div class="inline-flex items-center justify-center w-10 h-10 gradient-border rounded-full">
-                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full">
+                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-600 to-red-600 rounded-full">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
                         </svg>
                     </div>
                 </div>
-                <span class="text-white font-semibold text-lg">WiFi Portal</span>
+                <span class="text-white font-semibold text-lg">eBAZZU Hotspot</span>
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
                 <div class="flex items-center space-x-2">
@@ -460,8 +491,8 @@ if ($payment_status === 'success') {
                     </svg>
                 </div>
             </div>
-            <h1 class="text-4xl sm:text-5xl font-bold gradient-text-animated mb-4">Choose Your Perfect Bundle</h1>
-            <p class="text-gray-600 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">Stay connected with our premium data packages. Select the plan that perfectly fits your lifestyle and browsing needs.</p>
+            <h1 class="text-3xl sm:text-5xl font-bold gradient-text-animated mb-4">eBAZZU Hotspot Premium Plans</h1>
+            <p class="text-gray-600 text-base sm:text-xl max-w-3xl mx-auto leading-relaxed">Experience lightning-fast internet with our premium data bundles. Choose the perfect plan that matches your digital lifestyle and connectivity needs.</p>
             
             <!-- Quick Stats -->
             <div class="flex flex-wrap justify-center gap-4 sm:gap-8 mt-6">
@@ -521,24 +552,39 @@ if ($payment_status === 'success') {
         <?php endif; ?>
 
         <!-- Enhanced Bundle Cards Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 lg:gap-10 max-w-7xl mx-auto">
             <?php 
             $index = 0;
             $colors = [
-                ['gradient' => 'from-blue-500 via-indigo-500 to-purple-600', 'accent' => 'from-blue-400 to-indigo-500', 'bg' => 'from-blue-50 to-indigo-50'],
-                ['gradient' => 'from-purple-500 via-pink-500 to-red-500', 'accent' => 'from-purple-400 to-pink-500', 'bg' => 'from-purple-50 to-pink-50'],
-                ['gradient' => 'from-green-500 via-emerald-500 to-teal-600', 'accent' => 'from-green-400 to-emerald-500', 'bg' => 'from-green-50 to-emerald-50']
+                ['gradient' => 'from-blue-600 via-indigo-600 to-purple-700', 'accent' => 'from-blue-500 to-indigo-600', 'bg' => 'from-blue-50 to-indigo-50'],
+                ['gradient' => 'from-purple-600 via-pink-600 to-red-600', 'accent' => 'from-purple-500 to-red-500', 'bg' => 'from-purple-50 to-red-50'],
+                ['gradient' => 'from-red-600 via-orange-600 to-yellow-600', 'accent' => 'from-red-500 to-orange-500', 'bg' => 'from-red-50 to-orange-50']
             ];
             foreach ($bundles as $bundle): 
                 $index++;
                 $isPopular = $index == 2;
                 $color = $colors[($index - 1) % 3];
+
+                // Find the speed tier for the current bundle
+                $current_tier = null;
+                foreach (SPEED_TIERS as $tier) {
+                    if ($bundle['download_limit_kbps'] == $tier['download_kbps']) {
+                        $current_tier = $tier;
+                        break;
+                    }
+                }
             ?>
                 <div class="relative">
+                    <?php if ($current_tier): ?>
+                        <div class="tier-badge" style="background-color: <?php echo $current_tier['color']; ?>">
+                            <?php echo htmlspecialchars($current_tier['label']); ?>
+                        </div>
+                    <?php endif; ?>
+
                     <?php if ($isPopular): ?>
                         <div class="border-gradient glow-pulse">
                     <?php endif; ?>
-                    <div class="glass-premium bundle-card bundle-hover stagger-fade <?php echo $isPopular ? 'popular' : ''; ?> p-6 sm:p-8 flex flex-col rounded-2xl relative overflow-hidden" style="animation-delay: <?php echo $index * 0.15; ?>s; min-height: 480px;">
+                    <div class="glass-premium bundle-card bundle-hover stagger-fade <?php echo $isPopular ? 'popular' : ''; ?> p-4 sm:p-6 md:p-8 flex flex-col rounded-2xl relative overflow-hidden" style="animation-delay: <?php echo $index * 0.15; ?>s;">
                         <!-- Background Pattern -->
                         <div class="absolute inset-0 bg-gradient-to-br <?php echo $color['bg']; ?> opacity-30"></div>
                         <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white to-transparent opacity-5"></div>
@@ -656,14 +702,14 @@ if ($payment_status === 'success') {
                             <input type="hidden" name="amount" value="<?php echo (int)$bundle['price_kes']; ?>">
                             
                             <!-- Bundle Description -->
-                            <div class="bundle-description border-l-indigo-500 text-center">
+                            <div class="bundle-description border-l-blue-500 text-center">
                                 <p class="text-sm font-medium text-gray-600">
                                     <?php if ($index == 1): ?>
-                                        💡 Perfect for light browsing, social media, and messaging
+                                        💡 Perfect for light browsing, social media, and essential apps
                                     <?php elseif ($index == 2): ?>
-                                        🔥 Best value! Ideal for regular internet usage and streaming
+                                        🔥 Most Popular! Ideal for streaming, video calls, and daily usage
                                     <?php else: ?>
-                                        🚀 Power user bundle for heavy streaming, downloads, and work
+                                        🚀 Premium plan for power users, gaming, and business needs
                                     <?php endif; ?>
                                 </p>
                             </div>
@@ -704,7 +750,7 @@ if ($payment_status === 'success') {
         <!-- Enhanced Trust Section -->
         <div class="mt-20 text-center fade-in">
             <div class="glass-premium rounded-3xl p-8 sm:p-12 max-w-5xl mx-auto">
-                <h3 class="text-2xl sm:text-3xl font-bold gradient-text-animated mb-8">Why 10,000+ Users Trust Us</h3>
+                <h3 class="text-xl sm:text-3xl font-bold gradient-text-animated mb-8">Why 10,000+ Users Choose eBAZZU Hotspot</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
                     <div class="group">
                         <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
@@ -712,8 +758,8 @@ if ($payment_status === 'success') {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg>
                         </div>
-                        <h4 class="text-xl font-bold text-gray-800 mb-2">⚡ Lightning Fast</h4>
-                        <p class="text-gray-600 leading-relaxed">Ultra high-speed fiber internet with 99.9% uptime guarantee</p>
+                        <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">⚡ Lightning Fast Speed</h4>
+                        <p class="text-gray-600 leading-relaxed">Premium fiber internet with guaranteed high-speed connectivity and 99.9% uptime</p>
                         <div class="mt-3 flex justify-center">
                             <span class="bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">Up to 100 Mbps</span>
                         </div>
@@ -724,8 +770,8 @@ if ($payment_status === 'success') {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                             </svg>
                         </div>
-                        <h4 class="text-xl font-bold text-gray-800 mb-2">🔒 Bank-Level Security</h4>
-                        <p class="text-gray-600 leading-relaxed">Protected M-Pesa payments with end-to-end encryption</p>
+                        <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">🔒 Secure & Trusted</h4>
+                        <p class="text-gray-600 leading-relaxed">Bank-level security with encrypted M-Pesa payments and protected browsing</p>
                         <div class="mt-3 flex justify-center">
                             <span class="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">SSL Encrypted</span>
                         </div>
@@ -736,8 +782,8 @@ if ($payment_status === 'success') {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h4 class="text-xl font-bold text-gray-800 mb-2">🎧 24/7 Expert Support</h4>
-                        <p class="text-gray-600 leading-relaxed">Dedicated support team always ready to assist you</p>
+                        <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">🎧 Premium Support</h4>
+                        <p class="text-gray-600 leading-relaxed">24/7 professional technical support and customer service excellence</p>
                         <div class="mt-3 flex justify-center">
                             <span class="bg-gradient-to-r from-pink-100 to-red-100 text-pink-700 px-3 py-1 rounded-full text-xs font-semibold">Live Chat Available</span>
                         </div>

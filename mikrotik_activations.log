@@ -1,0 +1,32 @@
+2025-10-06 14:48:32 - BLOCKED - MAC: 00:TEST:MAC:7C9785 - Access revoked
+2025-10-06 14:48:52 - MAC: 00:TEST:MAC:7C9785 - Bundle: Daily 200MB (200MB LIMITED) - Type: LIMITED - Duration: 1440 mins - Expires: 2025-10-07 14:48:52
+2025-10-06 14:48:52 - BLOCKED - MAC: 00:TEST:MAC:7C9785 - Access revoked
+2025-10-08 16:13:31 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 16:13:49 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 16:14:10 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 16:21:10 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 16:51:18 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 16:51:33 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 16:52:09 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:52:09 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:52:15 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:52:30 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:52:34 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:56:05 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:56:06 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:56:14 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:56:15 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 18:52:07
+2025-10-08 16:59:49 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 17:00:04 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 17:01:07 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 17:01:17 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 17:02:26 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 17:02:37 - BLOCKED - MAC: 8C:DC:D4:25:4A:87 - Access revoked
+2025-10-08 17:02:54 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 19:02:52
+2025-10-08 17:02:55 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 19:02:52
+2025-10-08 17:03:03 - MAC: 8C:DC:D4:25:4A:87 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-08 19:02:52
+2025-10-10 11:46:52 - BLOCKED - MAC: 9E:30:F0:4C:59:20 - Access revoked
+2025-10-10 11:47:07 - BLOCKED - MAC: 9E:30:F0:4C:59:20 - Access revoked
+2025-10-10 11:47:43 - MAC: 9E:30:F0:4C:59:20 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-10 13:47:41
+2025-10-10 11:47:43 - MAC: 9E:30:F0:4C:59:20 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-10 13:47:41
+2025-10-10 11:48:09 - MAC: 9E:30:F0:4C:59:20 - Bundle: Testing Bundle (UNLIMITED) - Type: UNLIMITED - Duration: 120 mins - Expires: 2025-10-10 13:47:41

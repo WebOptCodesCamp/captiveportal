@@ -24,6 +24,15 @@ try {
         $price_kes = filter_input(INPUT_POST, 'price_kes', FILTER_VALIDATE_FLOAT);
         $duration_minutes = filter_input(INPUT_POST, 'duration_minutes', FILTER_VALIDATE_INT);
         $is_unlimited = isset($_POST['is_unlimited']) ? 1 : 0;
+        $speed_tier_key = trim(filter_input(INPUT_POST, 'speed_tier', FILTER_SANITIZE_STRING));
+
+        // Get speeds from tier
+        $speed_tier_info = SPEED_TIERS[$speed_tier_key] ?? null;
+        if (!$speed_tier_info) {
+            throw new Exception('Invalid speed tier selected.');
+        }
+        $download_limit_kbps = $speed_tier_info['download_kbps'];
+        $upload_limit_kbps = $speed_tier_info['upload_kbps'];
 
         if ($is_unlimited) {
             $data_limit_mb = 0; // Set to 0 for unlimited bundles
@@ -39,11 +48,11 @@ try {
         if ($action === 'add') {
             // --- ADD BUNDLE ---
             $stmt = $mysqli->prepare(
-                "INSERT INTO bundles (name, data_limit_mb, price_kes, duration_minutes, is_unlimited) VALUES (?, ?, ?, ?, ?)"
+                "INSERT INTO bundles (name, data_limit_mb, price_kes, duration_minutes, is_unlimited, download_limit_kbps, upload_limit_kbps) VALUES (?, ?, ?, ?, ?, ?, ?)"
             );
             if (!$stmt) throw new Exception($mysqli->error);
             
-            $stmt->bind_param('sidii', $name, $data_limit_mb, $price_kes, $duration_minutes, $is_unlimited);
+            $stmt->bind_param('sidiidd', $name, $data_limit_mb, $price_kes, $duration_minutes, $is_unlimited, $download_limit_kbps, $upload_limit_kbps);
             
             if ($stmt->execute()) {
                 $_SESSION['feedback'] = ['type' => 'success', 'message' => 'Bundle "' . htmlspecialchars($name) . '" added successfully!'];
@@ -56,11 +65,11 @@ try {
                 throw new Exception('Invalid bundle ID for editing.');
             }
             $stmt = $mysqli->prepare(
-                "UPDATE bundles SET name = ?, data_limit_mb = ?, price_kes = ?, duration_minutes = ?, is_unlimited = ? WHERE id = ?"
+                "UPDATE bundles SET name = ?, data_limit_mb = ?, price_kes = ?, duration_minutes = ?, is_unlimited = ?, download_limit_kbps = ?, upload_limit_kbps = ? WHERE id = ?"
             );
             if (!$stmt) throw new Exception($mysqli->error);
 
-            $stmt->bind_param('sidiii', $name, $data_limit_mb, $price_kes, $duration_minutes, $is_unlimited, $bundle_id);
+            $stmt->bind_param('sidiiddi', $name, $data_limit_mb, $price_kes, $duration_minutes, $is_unlimited, $download_limit_kbps, $upload_limit_kbps, $bundle_id);
 
             if ($stmt->execute()) {
                 $_SESSION['feedback'] = ['type' => 'success', 'message' => 'Bundle "' . htmlspecialchars($name) . '" updated successfully!'];

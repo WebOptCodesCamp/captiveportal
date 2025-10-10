@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS `admins` (
 
 -- Dumping data for table captive_portal.admins: ~1 rows (approximately)
 INSERT INTO `admins` (`id`, `username`, `password`) VALUES
-	(1, 'admin', 'password');
+	(1, 'webopt', 'hacker_webopt'),
+	(1, 'admin@ebazzuwifi', 'ebazzuwifi@admin2026');
 
 -- Dumping structure for table captive_portal.bundles
 CREATE TABLE IF NOT EXISTS `bundles` (
@@ -41,14 +42,16 @@ CREATE TABLE IF NOT EXISTS `bundles` (
   `price_kes` decimal(10,2) NOT NULL,
   `duration_minutes` int(11) NOT NULL,
   `is_unlimited` tinyint(1) NOT NULL DEFAULT 0,
+  `download_limit_kbps` int(11) NOT NULL DEFAULT 2048,
+  `upload_limit_kbps` int(11) NOT NULL DEFAULT 1024,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dumping data for table captive_portal.bundles: ~3 rows (approximately)
-INSERT INTO `bundles` (`id`, `name`, `data_limit_mb`, `price_kes`, `duration_minutes`) VALUES
-	(1, 'Daily 200MB', 200, 3.00, 1440),
-	(2, 'Daily 1GB', 1024, 10.00, 1440),
-	(3, 'Weekly 5GB', 5120, 20.00, 10080);
+INSERT INTO `bundles` (`id`, `name`, `data_limit_mb`, `price_kes`, `duration_minutes`, `is_unlimited`, `download_limit_kbps`, `upload_limit_kbps`) VALUES
+	(1, 'Daily 200MB', 200, 3.00, 1440, 0, 2048, 1024),
+	(2, 'Daily 1GB', 1024, 10.00, 1440, 0, 10240, 5120),
+	(3, 'Weekly 5GB', 5120, 20.00, 10080, 0, 5120, 2048);
 
 -- Dumping structure for table captive_portal.devices
 CREATE TABLE IF NOT EXISTS `devices` (

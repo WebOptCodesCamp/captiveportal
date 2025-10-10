@@ -66,7 +66,7 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - WiFi Portal</title>
+    <title>Admin Dashboard - eBAZZU Hotspot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -152,7 +152,7 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
         }
         
         .table-enhanced thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
         }
         
         .table-enhanced thead th {
@@ -237,13 +237,13 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
         }
         
         .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #7c3aed 40%, #dc2626 80%, #f59e0b 100%);
             position: relative;
             overflow: hidden;
             margin: 0;
             padding: 4rem 2rem 5rem 2rem;
             border-radius: 0 0 4rem 4rem;
-            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 20px 60px rgba(30, 64, 175, 0.4);
         }
         
         .hero-section::before {
@@ -359,17 +359,127 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
         .modal-content {
             background: white;
             border-radius: 24px;
-            padding: 2rem;
             width: 100%;
             max-width: 500px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
             transform: scale(0.95);
             transition: transform 0.3s ease;
+            overflow: hidden; /* Prevent content overflow */
+            max-height: 90vh; /* Prevent modal from being too tall */
+            overflow-y: auto; /* Allow scrolling for tall content */
         }
         .modal-overlay.active .modal-content {
             transform: scale(1);
         }
         
+        /* Bundle Management Styles */
+        .bundle-management {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            margin: 2rem 0;
+        }
+        
+        /* Modern form inputs */
+        .modern-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+            transition: all 0.3s ease;
+        }
+        .modern-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background-color: white;
+        }
+        
+        /* Button styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+        .btn-secondary {
+            background: white;
+            color: #4f46e5;
+            border: 1px solid #e5e7eb;
+        }
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .bundle-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .bundle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .bundle-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+        }
+
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .status-expired {
+            background: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+        }
+
+        .bundle-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .bundle-button {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bundle-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0.5rem 0;
+        }
+
         /* Responsive improvements */
         @media (max-width: 768px) {
             .stats-card:hover {
@@ -397,6 +507,45 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
             
             .hero-stat-number {
                 font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-title {
+                font-size: 1.75rem;
+            }
+            .dashboard-subtitle {
+                font-size: 1rem;
+            }
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+            .table-enhanced thead {
+                display: none;
+            }
+            .table-enhanced tbody, .table-enhanced tr, .table-enhanced td {
+                display: block;
+                width: 100%;
+            }
+            .table-enhanced tr {
+                margin-bottom: 1rem;
+                border: 1px solid rgba(0,0,0,0.05);
+                border-radius: 16px;
+                padding: 1rem;
+            }
+            .table-enhanced td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+                border: none;
+            }
+            .table-enhanced td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                color: #4b5563;
             }
         }
         
@@ -430,22 +579,22 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
     </div>
     
     <!-- Enhanced Navigation Bar -->
-    <nav class="navbar-enhanced glass-premium sticky top-0 z-50 px-4 py-4">
+    <nav class="navbar-enhanced glass-premium sticky top-0 z-50 px-4 py-4 bg-violet-400">
         <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
             <div class="flex items-center space-x-3">
                 <div class="relative">
-                    <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg">
+                    <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-600 to-red-600 rounded-full shadow-lg">
                         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
                         </svg>
                     </div>
                     <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
                         <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                     </div>
                 </div>
-                <div>
-                    <span class="text-white font-bold text-xl">Admin Dashboard</span>
-                    <div class="text-gray-300 text-xs font-medium">WiFi Portal Management</div>
+                <div >
+                    <span class="text-white font-bold text-xl">eBAZZU Hotspot</span>
+                    <div class="text-gray-300 text-xs font-medium">Professional WiFi Solutions</div>
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
@@ -481,8 +630,8 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
             
-            <h1 class="dashboard-title">🚀 Admin Control Center</h1>
-            <p class="dashboard-subtitle">Real-time monitoring and intelligent management of your WiFi portal ecosystem</p>
+            <h1 class="dashboard-title">🚀 eBAZZU Hotspot Control Center</h1>
+            <p class="dashboard-subtitle">Real-time monitoring and intelligent management of your premium WiFi services</p>
             
             <!-- System Status Indicator -->
             <div class="flex items-center justify-center space-x-6 mt-4 mb-6">
@@ -577,27 +726,32 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
         <div id="bundle-management" class="section-card p-8 mb-12 fade-in-up" style="animation-delay: 0.5s">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
                 <div class="flex items-center space-x-4 mb-4 sm:mb-0">
-                    <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full shadow-lg">
+                    <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full shadow-lg transform transition-transform hover:scale-105">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-800">Bundle Management</h2>
-                        <p class="text-gray-600 text-sm">Add, edit, or remove data bundles available to users</p>
+                        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                            Bundle Management
+                            <span class="ml-2 px-2 py-1 text-xs font-semibold text-indigo-800 bg-indigo-100 rounded-full"><?php echo count($bundles); ?> Bundles</span>
+                        </h2>
+                        <p class="text-gray-600 text-sm">Manage your data bundles and pricing plans</p>
                     </div>
                 </div>
-                <button id="add-bundle-btn" class="btn btn-primary">
+                <button id="add-bundle-btn" class="btn btn-primary transform transition-transform hover:scale-105 hover:shadow-lg">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     Add New Bundle
                 </button>
             </div>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
                 <table class="table-enhanced w-full text-sm">
-                    <thead>
+                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                         <tr>
-                            <th scope="col" class="text-left">Bundle Name</th>
-                            <th scope="col" class="text-center">Data Limit</th>
-                            <th scope="col" class="text-center">Price (KES)</th>
-                            <th scope="col" class="text-center">Duration</th>
+                            <th scope="col" class="text-left font-semibold text-gray-700 px-6 py-3">Bundle Name</th>
+                            <th scope="col" class="text-center font-semibold text-gray-700 px-6 py-3">Data Limit</th>
+                            <th scope="col" class="text-center font-semibold text-gray-700 px-6 py-3">Price (KES)</th>
+                            <th scope="col" class="text-center font-semibold text-gray-700 px-6 py-3">Duration</th>
+                            <th scope="col" class="text-center font-semibold text-gray-700 px-6 py-3">Speed Tier</th>
+                            <th scope="col" class="text-right font-semibold text-gray-700 px-6 py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -613,20 +767,77 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                             }
                         }
 
-                        foreach ($bundles as $bundle): 
+                        if (empty($bundles)): 
                         ?>
                         <tr>
-                            <td class="px-6 py-4 font-semibold text-gray-800"><?php echo htmlspecialchars($bundle['name']); ?></td>
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-medium text-gray-700 mb-1">No Bundles Available</h3>
+                                    <p class="text-gray-500 mb-4">Create your first bundle to get started</p>
+                                    <button id="empty-add-bundle-btn" class="btn btn-primary btn-sm">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                        Add Bundle
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php else: foreach ($bundles as $bundle): ?>
+                        <tr class="hover:bg-gray-50 transition-colors border-t border-gray-100">
+                            <td class="px-6 py-4">
+                                <div class="font-semibold text-gray-800"><?php echo htmlspecialchars($bundle['name']); ?></div>
+                                <div class="text-xs text-gray-500">ID: <?php echo $bundle['id']; ?></div>
+                            </td>
                             <td class="px-6 py-4 text-center">
                                 <?php if ($bundle['is_unlimited']): ?>
-                                    <span class="text-indigo-600 font-bold">Unlimited</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" transform="rotate(45 10 10)"></path>
+                                        </svg>
+                                        Unlimited
+                                    </span>
                                 <?php else: ?>
-                                    <?php echo $bundle['data_limit_mb'] >= 1024 ? round($bundle['data_limit_mb'] / 1024, 1) . ' GB' : $bundle['data_limit_mb'] . ' MB'; ?>
+                                    <span class="font-medium text-gray-700">
+                                        <?php echo $bundle['data_limit_mb'] >= 1024 ? round($bundle['data_limit_mb'] / 1024, 1) . ' GB' : $bundle['data_limit_mb'] . ' MB'; ?>
+                                    </span>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4 text-center font-bold text-indigo-600">KES <?php echo number_format($bundle['price_kes'], 2); ?></td>
-                            <td class="px-6 py-4 text-center"><?php echo formatDuration($bundle['duration_minutes']); ?></td>
-                            <td class="px-6 py-4 text-right">
+                            <td class="px-6 py-4 text-center">
+                                <div class="font-bold text-indigo-600">KES <?php echo number_format($bundle['price_kes'], 2); ?></div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <?php echo formatDuration($bundle['duration_minutes']); ?>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <?php
+                                    $tier_label = 'N/A';
+                                    $tier_color = '#6B7280';
+                                    foreach (SPEED_TIERS as $key => $tier) {
+                                        if ($bundle['download_limit_kbps'] == $tier['download_kbps']) {
+                                            $tier_label = $tier['label'];
+                                            $tier_color = $tier['color'];
+                                            break;
+                                        }
+                                    }
+                                ?>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium" 
+                                      style="background-color: <?php echo $tier_color; ?>25; color: <?php echo $tier_color; ?>">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                    <?php echo $tier_label; ?>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
                                 <div class="flex justify-end space-x-2">
                                     <button class="edit-btn p-2 rounded-md hover:bg-indigo-100 text-indigo-600 transition-colors"
                                             data-id="<?php echo $bundle['id']; ?>"
@@ -634,7 +845,8 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                                             data-limit="<?php echo $bundle['data_limit_mb']; ?>"
                                             data-price="<?php echo $bundle['price_kes']; ?>"
                                             data-duration-minutes="<?php echo $bundle['duration_minutes']; ?>"
-                                            data-is-unlimited="<?php echo $bundle['is_unlimited']; ?>">
+                                            data-is-unlimited="<?php echo $bundle['is_unlimited']; ?>"
+                                            data-download-limit-kbps="<?php echo $bundle['download_limit_kbps']; ?>">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                     </button>
                                     <button class="delete-btn p-2 rounded-md hover:bg-red-100 text-red-600 transition-colors"
@@ -645,7 +857,7 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                                 </div>
                             </td>
                         </tr>
-                        <?php endforeach; ?>
+                        <?php endforeach; endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -932,7 +1144,7 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                             </svg>
                         </div>
                         <div class="text-left">
-                            <div class="text-lg font-bold text-gray-800">WiFi Portal Admin</div>
+                            <div class="text-lg font-bold text-gray-800">eBAZZU Hotspot Admin</div>
                             <div class="text-sm text-gray-600">&copy; <?php echo date('Y'); ?> All rights reserved</div>
                         </div>
                     </div>
@@ -952,59 +1164,130 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
 
     <!-- Add/Edit Bundle Modal -->
     <div id="bundle-modal" class="modal-overlay">
-        <div class="modal-content">
-            <form id="bundle-form" action="manage_bundle.php" method="POST">
+        <div class="modal-content max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <form id="bundle-form" action="manage_bundle.php" method="POST" class="relative">
+                <!-- Enhanced header with wave design -->
+                <div class="relative h-32 bg-gradient-to-r from-indigo-600 to-purple-700 overflow-hidden">
+                    <div class="absolute bottom-0 left-0 right-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full h-24">
+                            <path fill="#ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                        </svg>
+                    </div>
+                    <div class="absolute top-6 left-8 flex items-center">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                        <h2 id="modal-title" class="text-2xl font-bold text-white">Add New Bundle</h2>
+                    </div>
+                    <button type="button" class="close-modal-btn absolute top-6 right-6 p-2 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
                 <input type="hidden" name="action" id="form-action" value="add">
                 <input type="hidden" name="bundle_id" id="bundle-id">
 
-                <div class="flex items-center justify-between mb-6">
-                    <h2 id="modal-title" class="text-2xl font-bold text-gray-800">Add New Bundle</h2>
-                    <button type="button" class="close-modal-btn p-2 rounded-full hover:bg-gray-100">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
-                <div class="space-y-5">
-                    <div>
-                        <label for="name" class="text-sm font-semibold text-gray-700">Bundle Name</label>
-                        <input type="text" name="name" id="name" class="modern-input mt-1" placeholder="e.g., Daily 1GB" required>
-                    </div>
-
-                    <div>
-                        <label for="data_limit_mb" class="text-sm font-semibold text-gray-700 flex justify-between">
-                            <span>Data Limit (MB)</span>
-                            <span id="data-limit-value" class="font-bold text-indigo-600">1024 MB / 1.0 GB</span>
-                        </label>
-                        <input type="range" name="data_limit_mb" id="data_limit_mb" min="10" max="10240" step="10" value="1024" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-2">
-                    </div>
-
-                    <div class="flex items-center">
-                        <input type="checkbox" name="is_unlimited" id="is_unlimited" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                        <label for="is_unlimited" class="ml-2 block text-sm text-gray-900">Unlimited Bundle</label>
-                    </div>
-
-                    <div>
-                        <label for="price_kes" class="text-sm font-semibold text-gray-700">Price (KES)</label>
-                        <input type="number" name="price_kes" id="price_kes" class="modern-input mt-1" placeholder="e.g., 20" required min="0" step="0.01">
-                    </div>
-
-                    <div>
-                        <label for="duration_value" class="text-sm font-semibold text-gray-700">Duration</label>
-                        <div class="flex items-center space-x-2 mt-1">
-                            <input type="number" name="duration_value" id="duration_value" class="modern-input w-2/3" placeholder="e.g., 24" required min="1">
-                            <select name="duration_unit" id="duration_unit" class="modern-input w-1/3">
-                                <option value="minutes">Minutes</option>
-                                <option value="hours">Hours</option>
-                                <option value="days" selected>Days</option>
-                            </select>
+                <div class="px-8 py-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="col-span-2">
+                            <label for="name" class="text-sm font-semibold text-gray-700 block mb-2">Bundle Name</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" name="name" id="name" class="modern-input pl-10" placeholder="e.g., Daily 1GB" required>
+                            </div>
                         </div>
-                        <input type="hidden" name="duration_minutes" id="duration_minutes">
-                    </div>
-                </div>
 
-                <div class="flex justify-end space-x-4 mt-8">
-                    <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
-                    <button type="submit" id="modal-submit-btn" class="btn btn-primary">Add Bundle</button>
+                        <div class="col-span-2 bg-indigo-50 p-6 rounded-xl border border-indigo-100">
+                            <div class="flex items-center justify-between mb-3">
+                                <label for="data_limit_mb" class="text-sm font-semibold text-indigo-800">Data Limit</label>
+                                <span id="data-limit-value" class="font-bold text-indigo-700 text-sm px-3 py-1 bg-indigo-100 rounded-full">1024 MB / 1.0 GB</span>
+                            </div>
+                            <div class="relative mt-1">
+                                <input type="range" name="data_limit_mb" id="data_limit_mb" min="10" max="10240" step="10" value="1024" 
+                                    class="w-full h-3 bg-indigo-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="flex justify-between text-xs text-indigo-600 mt-2 px-1">
+                                    <span>10 MB</span>
+                                    <span>5 GB</span>
+                                    <span>10 GB</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-4 mt-4 bg-white rounded-lg border border-indigo-100 shadow-sm">
+                                <input type="checkbox" name="is_unlimited" id="is_unlimited" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <div class="ml-3">
+                                    <label for="is_unlimited" class="font-medium text-indigo-800 block">Unlimited Bundle</label>
+                                    <p class="text-indigo-600 text-sm">Users will have unlimited data with this bundle</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="speed_tier" class="text-sm font-semibold text-gray-700 block mb-2">Speed Tier</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                                <select name="speed_tier" id="speed_tier" class="modern-input pl-10">
+                                    <?php foreach (SPEED_TIERS as $key => $tier): ?>
+                                        <option value="<?php echo $key; ?>"><?php echo htmlspecialchars($tier['label']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="price_kes" class="text-sm font-semibold text-gray-700 block mb-2">Price (KES)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm font-medium">KES</span>
+                                </div>
+                                <input type="number" name="price_kes" id="price_kes" class="modern-input pl-14" placeholder="e.g., 20" required min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="col-span-2">
+                            <label for="duration_value" class="text-sm font-semibold text-gray-700 block mb-2">Duration</label>
+                            <div class="flex items-center space-x-3 mt-1">
+                                <div class="relative flex-1">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <input type="number" name="duration_value" id="duration_value" class="modern-input pl-10" placeholder="e.g., 24" required min="1">
+                                </div>
+                                <select name="duration_unit" id="duration_unit" class="modern-input w-1/3">
+                                    <option value="minutes">Minutes</option>
+                                    <option value="hours">Hours</option>
+                                    <option value="days" selected>Days</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="duration_minutes" id="duration_minutes">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-100">
+                        <button type="button" class="btn btn-secondary close-modal-btn hover:bg-gray-100 transition-colors flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Cancel
+                        </button>
+                        <button type="submit" id="modal-submit-btn" class="btn btn-primary bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-colors flex items-center shadow-md hover:shadow-lg">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Add Bundle
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -1012,28 +1295,53 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
 
     <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="modal-overlay">
-        <div class="modal-content text-center">
-            <form id="delete-form" action="manage_bundle.php" method="POST">
+        <div class="modal-content max-w-md w-full">
+            <form id="delete-form" action="manage_bundle.php" method="POST" class="p-6">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="bundle_id" id="delete-bundle-id">
 
-                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </div>
                 
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Delete Bundle?</h2>
-                <p class="text-gray-600 mb-6">Are you sure you want to delete the "<strong id="delete-bundle-name"></strong>" bundle? This action cannot be undone.</p>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">Delete Bundle?</h2>
+                <p class="text-gray-600 mb-6 text-center">Are you sure you want to delete the "<strong id="delete-bundle-name" class="text-red-600"></strong>" bundle? This action cannot be undone.</p>
 
                 <div class="flex justify-center space-x-4">
-                    <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
-                    <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary close-modal-btn hover:bg-gray-100 transition-colors">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn bg-red-600 hover:bg-red-700 text-white transition-colors">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        Yes, Delete
+                    </button>
                 </div>
             </form>
         </div>
     </div>
     
     <script>
+        const speedTiers = <?php echo json_encode(SPEED_TIERS); ?>;
+
         document.addEventListener('DOMContentLoaded', function() {
+            // --- Dynamically add data-labels for responsive tables ---
+            const tables = document.querySelectorAll('.table-enhanced');
+            tables.forEach(table => {
+                const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+                table.querySelectorAll('tbody tr').forEach(tr => {
+                    tr.querySelectorAll('td').forEach((td, i) => {
+                        if (headers[i]) {
+                            td.setAttribute('data-label', headers[i]);
+                        }
+                    });
+                });
+            });
+
             // --- Toast Notification ---
             const toast = document.getElementById('toast-notification');
             if (toast) {
@@ -1049,6 +1357,7 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
             const bundleModal = document.getElementById('bundle-modal');
             const deleteModal = document.getElementById('delete-modal');
             const addBtn = document.getElementById('add-bundle-btn');
+            const emptyAddBtn = document.getElementById('empty-add-bundle-btn');
             const closeBtns = document.querySelectorAll('.close-modal-btn');
 
             const form = document.getElementById('bundle-form');
@@ -1068,14 +1377,24 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
             const dataLimitValue = document.getElementById('data-limit-value');
 
             function openModal(modal) {
+                // Close any open modals first
+                closeAllModals();
+                // Then open the requested modal
                 modal.classList.add('active');
+                // Prevent body scrolling when modal is open
+                document.body.style.overflow = 'hidden';
             }
 
-            function closeModal(modal) {
-                modal.classList.remove('active');
+            function closeAllModals() {
+                const modals = document.querySelectorAll('.modal-overlay');
+                modals.forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                // Restore body scrolling
+                document.body.style.overflow = '';
             }
 
-            addBtn.addEventListener('click', () => {
+            function setupAddBundleModal() {
                 form.reset();
                 modalTitle.textContent = 'Add New Bundle';
                 modalSubmitBtn.textContent = 'Add Bundle';
@@ -1085,8 +1404,19 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                 dataLimitInput.disabled = false;
                 updateDataLimitDisplay();
                 openModal(bundleModal);
-            });
+            }
 
+            // Add button click handler
+            if (addBtn) {
+                addBtn.addEventListener('click', setupAddBundleModal);
+            }
+
+            // Empty state add button click handler
+            if (emptyAddBtn) {
+                emptyAddBtn.addEventListener('click', setupAddBundleModal);
+            }
+
+            // Edit button click handlers
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     modalTitle.textContent = 'Edit Bundle';
@@ -1098,6 +1428,17 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                     dataLimitInput.value = btn.dataset.limit;
                     priceInput.value = btn.dataset.price;
                     isUnlimitedInput.checked = btn.dataset.isUnlimited === '1';
+
+                    // Set the speed tier dropdown
+                    const downloadSpeed = btn.dataset.downloadLimitKbps;
+                    let selectedTier = '';
+                    for (const key in speedTiers) {
+                        if (speedTiers[key].download_kbps == downloadSpeed) {
+                            selectedTier = key;
+                            break;
+                        }
+                    }
+                    document.getElementById('speed_tier').value = selectedTier;
 
                     // Handle duration population
                     const totalMinutes = parseInt(btn.dataset.durationMinutes);
@@ -1118,6 +1459,7 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                 });
             });
 
+            // Delete button click handlers
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.getElementById('delete-bundle-id').value = btn.dataset.id;
@@ -1126,11 +1468,25 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
                 });
             });
 
+            // Close button click handlers
             closeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    closeModal(bundleModal);
-                    closeModal(deleteModal);
+                btn.addEventListener('click', closeAllModals);
+            });
+
+            // Close modal when clicking outside content
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeAllModals();
+                    }
                 });
+            });
+
+            // Close modal on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeAllModals();
+                }
             });
 
             // --- Form Submission ---
@@ -1151,6 +1507,11 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
 
             // --- Slider Value Display ---
             function updateDataLimitDisplay() {
+                if (isUnlimitedInput.checked) {
+                    dataLimitValue.textContent = 'Unlimited';
+                    return;
+                }
+                
                 const mb = parseInt(dataLimitInput.value);
                 if (mb >= 1024) {
                     const gb = (mb / 1024).toFixed(1);
@@ -1164,11 +1525,7 @@ $bundles = $bundles_result->fetch_all(MYSQLI_ASSOC);
 
             isUnlimitedInput.addEventListener('change', function() {
                 dataLimitInput.disabled = this.checked;
-                if (this.checked) {
-                    dataLimitValue.textContent = 'Unlimited';
-                } else {
-                    updateDataLimitDisplay();
-                }
+                updateDataLimitDisplay();
             });
         });
     </script>
