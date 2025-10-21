@@ -505,24 +505,14 @@ class MikroTikController {
         }
         
         try {
-            // The 'stats' argument is not a real argument, we need to get all queues and then query stats for each one
+            // Fetch all simple queues with the 'captive_' prefix and their stats in a single call.
             $queues = $this->api->comm("/queue/simple/print", array(
-                "?name" => "captive_"
+                "?name" => "captive_",
+                "stats" => ""
             ));
             
-            $queue_stats = array();
-            foreach ($queues as $queue) {
-                $stats = $this->api->comm("/queue/simple/print", array(
-                    ".id" => $queue['.id'],
-                    "stats" => ""
-                ));
-                if (!empty($stats)) {
-                    $queue_stats[] = $stats[0];
-                }
-            }
-            
             $this->disconnect();
-            return $queue_stats;
+            return $queues;
             
         } catch (Exception $e) {
             error_log("MikroTik getQueuesWithStats error: " . $e->getMessage());
